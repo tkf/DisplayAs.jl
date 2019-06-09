@@ -9,7 +9,7 @@ makedocs(;
     repo="https://github.com/tkf/DisplayAs.jl/blob/{commit}{path}#L{line}",
     sitename="DisplayAs.jl",
     authors="Takafumi Arakaki <aka.tkf@gmail.com>",
-    assets=String[],
+    strict=true,
 )
 
 deploydocs(;
