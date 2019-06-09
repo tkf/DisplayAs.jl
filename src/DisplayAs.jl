@@ -4,6 +4,20 @@
 end ->
 module DisplayAs
 
+_showables = [
+    (:Text, "text/plain")
+    (:MD, "text/markdown")
+    (:HTML, "text/html")
+    (:JSON, "application/json")
+    (:SVG, "image/svg+xml")
+    (:PNG, "image/png")
+    (:PDF, "application/pdf")
+    (:EPS, "application/eps")
+    (:JPEG, "image/jpeg")
+    (:PS, "application/postscript")
+    (:LaTeX, "text/latex")
+]
+
 """
     Showable{mime <: MIME}
 
@@ -41,8 +55,18 @@ struct Showable{mime <: MIME}
     content
 end
 
+# Following method introduces method ambiguities with `Base` and
+# `DelimitedFiles`:
+#=
 Base.show(io::IO, ::mime, s::Showable{mime}) where mime <: MIME =
     show(io, mime(), s.content)
+=#
+
+for (_, mime) in _showables
+    MIMEType = typeof(MIME(mime))
+    @eval Base.show(io::IO, ::$MIMEType, s::Showable{$MIMEType}) =
+        show(io, $MIMEType(), s.content)
+end
 
 """
     mime"..." :: Type{<:Showable}
@@ -59,16 +83,17 @@ macro mime_str(s)
     :(Showable{MIME{Symbol($s)}})
 end
 
-const Text = Showable{MIME"text/plain"}
-const MD = Showable{MIME"text/markdown"}
-const HTML = Showable{MIME"text/html"}
-const JSON = Showable{MIME"application/json"}
-const SVG = Showable{MIME"image/svg+xml"}
-const PNG = Showable{MIME"image/png"}
-const PDF = Showable{MIME"application/pdf"}
-const EPS = Showable{MIME"application/eps"}
-const JPEG = Showable{MIME"image/jpeg"}
-const PS = Showable{MIME"application/postscript"}
-const LaTeX = Showable{MIME"text/latex"}
+for (name, mime) in _showables
+    doc = """
+        DisplayAs.$name(x)
+
+    Wrap an object `x` in another object that prefers to be displayed as
+    MIME type $mime.  That is to say, `display(DisplayAs.$name(x))` is
+    equivalent to `display("$mime", x)` (except some corner cases).
+
+    See also [`Showable`](@ref).
+    """
+    @eval @doc $doc const $name = @mime_str $mime
+end
 
 end # module
