@@ -16,6 +16,8 @@ _showables = [
     (:JPEG, "image/jpeg")
     (:PS, "application/postscript")
     (:LaTeX, "text/latex")
+    (:CSV, "text/csv")
+    (:TSV, "text/tab-separated-values")
 ]
 
 """
