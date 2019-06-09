@@ -1,5 +1,38 @@
 module DisplayAs
 
+"""
+    Showable{mime <: MIME}
+
+# Examples
+```jldoctest
+julia> using DisplayAs
+
+julia> DisplayAs.Showable{MIME"text/html"} === DisplayAs.HTML
+true
+
+julia> using Markdown
+
+julia> md = Markdown.parse("hello");
+
+julia> showable("text/html", md)
+true
+
+julia> showable("text/markdown", md)
+true
+
+julia> showable("text/html", DisplayAs.HTML(md))
+true
+
+julia> showable("text/markdown", DisplayAs.HTML(md))
+false
+
+julia> showable("text/html", DisplayAs.MD(md))
+false
+
+julia> showable("text/markdown", DisplayAs.MD(md))
+true
+```
+"""
 struct Showable{mime <: MIME}
     content
 end
