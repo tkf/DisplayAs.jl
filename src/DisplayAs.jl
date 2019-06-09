@@ -1,11 +1,8 @@
 module DisplayAs
 
-struct Showable{MT <: MIME}
-    mime::MT
+struct Showable{mime <: MIME}
     content
 end
-
-Showable{mime}(content) where {mime <: MIME} = Showable(mime(), content)
 
 Base.show(io::IO, ::mime, s::Showable{mime}) where mime <: MIME =
     show(io, mime(), s.content)
