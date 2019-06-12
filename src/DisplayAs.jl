@@ -98,4 +98,58 @@ for (name, mime) in _showables
     @eval @doc $doc const $name = @mime_str $mime
 end
 
+"""
+    Unlimited
+
+Unlimit display size.  Useful for, e.g., printing all contents of
+dataframes in a Jupyter notebook.
+
+# Examples
+```
+julia> using DisplayAs, VegaDatasets
+
+julia> data = dataset("cars");
+
+julia> data |> DisplayAs.Unlimited
+```
+"""
+struct Unlimited
+    content
+end
+
+unlimit(io) = IOContext(
+    io,
+    :compact => false,
+    :limit => false,
+    :displaysize => (typemax(Int), typemax(Int)),
+)
+
+_textmimes = [m for (_, m) in _showables if startswith(m, "text/")]
+_textmimes = [
+    _textmimes
+    # from multimedia.jl:
+    "application/atom+xml"
+    "application/ecmascript"
+    "application/javascript"
+    "application/julia"
+    "application/json"
+    "application/postscript"
+    "application/rdf+xml"
+    "application/rss+xml"
+    "application/x-latex"
+    "application/xhtml+xml"
+    "application/xml"
+    "application/xml-dtd"
+    "image/svg+xml"
+    "model/vrml"
+    "model/x3d+vrml"
+    "model/x3d+xml"
+]
+
+for mime in _textmimes
+    mimetype = MIME{Symbol(mime)}
+    @eval Base.show(io::IO, ::$mimetype, obj::Unlimited) =
+        show(unlimit(io), $mimetype(), obj.content)
+end
+
 end # module
