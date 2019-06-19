@@ -117,6 +117,10 @@ struct Unlimited
     content
 end
 
+Base.showable(::MIME{mime}, x::Unlimited) where {mime} =
+    hasmethod(show, Tuple{IO, MIME{mime}, typeof(x)}) &&
+    showable(MIME(mime), x.content)
+
 unlimit(io) = IOContext(
     io,
     :compact => false,
