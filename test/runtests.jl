@@ -9,7 +9,4 @@ using Test
 end
 
 using Aqua
-@testset "Aqua" begin
-    Aqua.test_all(DisplayAs)
-    Aqua.test_ambiguities([DisplayAs, Base])
-end
+Aqua.test_all(DisplayAs)
