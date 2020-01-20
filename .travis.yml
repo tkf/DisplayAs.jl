@@ -9,10 +9,6 @@ julia:
   - 1.1
   - 1.2
   - nightly
-matrix:
-  allow_failures:
-    - julia: nightly
-  fast_finish: true
 notifications:
   email: false
 coveralls: true
@@ -24,6 +20,9 @@ codecov: true
 if: branch = master OR tag IS present OR type != push
 
 jobs:
+  allow_failures:
+    - julia: nightly
+  fast_finish: true
   include:
     - stage: Documentation
       script: julia --project=docs --color=yes -e '
