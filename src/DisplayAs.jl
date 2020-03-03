@@ -57,6 +57,10 @@ true
 struct Showable{mime <: MIME}
     content
 end
+# Allows nesting to enable an object to show with multiple mimes
+function Showable{T}(s::Showable{S}) where {T<:MIME, S<:MIME}
+    return Showable{Union{T,S}}(s.content)
+end
 
 # Following method introduces method ambiguities with `Base` and
 # `DelimitedFiles`:
@@ -67,7 +71,7 @@ Base.show(io::IO, ::mime, s::Showable{mime}) where mime <: MIME =
 
 for (_, mime) in _showables
     MIMEType = typeof(MIME(mime))
-    @eval Base.show(io::IO, ::$MIMEType, s::Showable{$MIMEType}) =
+    @eval Base.show(io::IO, ::$MIMEType, s::Showable{>:$MIMEType}) =
         show(io, $MIMEType(), s.content)
 end
 
@@ -93,6 +97,9 @@ for (name, mime) in _showables
     Wrap an object `x` in another object that prefers to be displayed as
     MIME type $mime.  That is to say, `display(DisplayAs.$name(x))` is
     equivalent to `display("$mime", x)` (except some corner cases).
+
+    If `x` is already of type `Showable` the result will allow
+    displaying in both the original and the new MIME type.
 
     See also [`Showable`](@ref).
     """
