@@ -30,3 +30,19 @@ false
 julia> showable("text/markdown", md_as_md)
 true
 ```
+
+It is also possible to use nesting in order to allow the object to be displayed
+as multiple MIME types:
+
+```julia
+julia> md_as_html_or_text = Markdown.parse("hello") |> DisplayAs.HTML |> DisplayAs.Text;
+
+julia> showable("text/html", md_as_html_or_text)
+true
+
+julia> showable("text/plain", md_as_html_or_text)
+true
+
+julia> showable("text/markdown", md_as_html_or_text)
+false
+```
