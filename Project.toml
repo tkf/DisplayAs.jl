@@ -1,7 +1,7 @@
 name = "DisplayAs"
 uuid = "0b91fe84-8a4c-11e9-3e1d-67c38462b6d6"
 authors = ["Takafumi Arakaki <aka.tkf@gmail.com>"]
-version = "0.1.2"
+version = "0.1.3-DEV"
 
 [compat]
 julia = "1"
