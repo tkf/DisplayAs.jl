@@ -107,34 +107,34 @@ for (name, mime) in _showables
 end
 
 """
-    Unlimited
+    IOContextCarrier(x, kv::Pair...)
 
-Unlimit display size.  Useful for, e.g., printing all contents of
-dataframes in a Jupyter notebook.
+Bundle arguments for `IOContext` with an object `x`.
 
 # Examples
-```
-julia> using DisplayAs, VegaDatasets
+```julia-repl
+julia> using DisplayAs
 
-julia> data = dataset("cars");
+julia> data = rand(2, 2)
+2×2 Array{Float64,2}:
+ 0.786992  0.576265
+ 0.321868  0.791263
 
-julia> data |> DisplayAs.Unlimited
+julia> DisplayAs.IOContextCarrier(data, :compact => false)
+2×2 Array{Float64,2}:
+ 0.7869920812675713   0.5762653628115182
+ 0.32186846202784314  0.791263230914472
 ```
 """
-struct Unlimited
+struct IOContextCarrier
     content
+    context::Dict{Symbol,Any}
 end
+IOContextCarrier(obj, kv::Pair...) = IOContextCarrier(obj, Dict{Symbol,Any}(kv...))
 
-Base.showable(::MIME{mime}, x::Unlimited) where {mime} =
+Base.showable(::MIME{mime}, x::IOContextCarrier) where {mime} =
     hasmethod(show, Tuple{IO, MIME{mime}, typeof(x)}) &&
     showable(MIME(mime), x.content)
-
-unlimit(io) = IOContext(
-    io,
-    :compact => false,
-    :limit => false,
-    :displaysize => (typemax(Int), typemax(Int)),
-)
 
 _textmimes = [m for (_, m) in _showables if startswith(m, "text/")]
 _textmimes = [
@@ -160,8 +160,30 @@ _textmimes = [
 
 for mime in _textmimes
     mimetype = MIME{Symbol(mime)}
-    @eval Base.show(io::IO, ::$mimetype, obj::Unlimited) =
-        show(unlimit(io), $mimetype(), obj.content)
+    @eval function Base.show(io::IO, ::$mimetype, obj::IOContextCarrier)
+        ioc = IOContext(io, obj.context...)
+        show(ioc, $mimetype(), obj.content)
+    end
+end
+
+"""
+    Unlimited
+
+Unlimit display size. Useful for, e.g., printing all contents of
+dataframes in a Jupyter notebook.
+
+# Examples
+```
+julia> using DisplayAs, VegaDatasets
+
+julia> data = dataset("cars");
+
+julia> data |> DisplayAs.Unlimited
+```
+"""
+function Unlimited(x)
+    IOContextCarrier(x, :compact => false, :limit => false,
+                        :displaysize => (typemax(Int), typemax(Int)))
 end
 
 end # module
