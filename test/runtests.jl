@@ -17,14 +17,18 @@ end
     @test showable("text/plain", text_png)
     @test showable("image/png", text_png)
     @test !showable("image/html", text_png)
-    # IOContextCarrier
+    # (set|with)context
     iob = IOBuffer()
     ioc = IOContext(iob, :compact=>true, :limit=>true, :displaysize=>(24, 80))
     show(ioc, MIME"text/plain"(), PrintContext())
     @test String(take!(iob)) == "true/true/(24, 80)"
-    show(ioc, MIME"text/plain"(), DisplayAs.IOContextCarrier(PrintContext()))
+    show(ioc, MIME"text/plain"(), DisplayAs.setcontext(PrintContext()))
     @test String(take!(iob)) == "true/true/(24, 80)"
-    show(ioc, MIME"text/plain"(), DisplayAs.IOContextCarrier(PrintContext(), :limit=>false))
+    show(ioc, MIME"text/plain"(), DisplayAs.withcontext()(PrintContext()))
+    @test String(take!(iob)) == "true/true/(24, 80)"
+    show(ioc, MIME"text/plain"(), DisplayAs.setcontext(PrintContext(), :limit=>false))
+    @test String(take!(iob)) == "true/false/(24, 80)"
+    show(ioc, MIME"text/plain"(), DisplayAs.withcontext(:limit=>false)(PrintContext()))
     @test String(take!(iob)) == "true/false/(24, 80)"
     # Unlimited
     show(ioc, MIME"text/plain"(), DisplayAs.Unlimited(PrintContext()))

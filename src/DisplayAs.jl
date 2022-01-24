@@ -106,31 +106,55 @@ for (name, mime) in _showables
     @eval @doc $doc const $name = @mime_str $mime
 end
 
-"""
-    IOContextCarrier(x, kv::Pair...)
+# Internal type to bundle arguments for IOContext
+struct IOContextCarrier
+    content
+    context::Dict{Symbol,Any}
+end
 
-Bundle arguments for `IOContext` with an object `x`.
+"""
+    DisplayAs.setcontext(obj, kvs::Pair...)
+
+Bundle arguments for `IOContext` with the object `x`.
 
 # Examples
 ```julia-repl
-julia> using DisplayAs
+julia> import DisplayAs
 
 julia> data = rand(2, 2)
 2×2 Array{Float64,2}:
  0.786992  0.576265
  0.321868  0.791263
 
-julia> DisplayAs.IOContextCarrier(data, :compact => false)
+julia> DisplayAs.setcontext(data, :compact => false)
 2×2 Array{Float64,2}:
  0.7869920812675713   0.5762653628115182
  0.32186846202784314  0.791263230914472
 ```
+
+See also [`DisplayAs.withcontext`](@ref).
 """
-struct IOContextCarrier
-    content
-    context::Dict{Symbol,Any}
-end
-IOContextCarrier(obj, kv::Pair...) = IOContextCarrier(obj, Dict{Symbol,Any}(kv...))
+setcontext(obj, kvs::Pair...) = IOContextCarrier(obj, Dict{Symbol,Any}(kvs...))
+
+"""
+    DisplayAs.withcontext(kvs::Pair...)
+
+Convenience method equivalent to `obj -> DisplayAs.setcontext(obj, kvs...)`
+useful for "piping".
+
+# Examples
+```julia-repl
+julia> import DisplayAs
+
+julia> rand(2, 2) |> DisplayAs.withcontext(:compact => false)
+2×2 Array{Float64,2}:
+ 0.7869920812675713   0.5762653628115182
+ 0.32186846202784314  0.791263230914472
+```
+
+See also [`DisplayAs.withcontext`](@ref).
+"""
+withcontext(kvs::Pair...) = obj -> setcontext(obj, kvs...)
 
 Base.showable(::MIME{mime}, x::IOContextCarrier) where {mime} =
     hasmethod(show, Tuple{IO, MIME{mime}, typeof(x)}) &&
@@ -182,8 +206,8 @@ julia> data |> DisplayAs.Unlimited
 ```
 """
 function Unlimited(x)
-    IOContextCarrier(x, :compact => false, :limit => false,
-                        :displaysize => (typemax(Int), typemax(Int)))
+    setcontext(x, :compact => false, :limit => false,
+                  :displaysize => (typemax(Int), typemax(Int)))
 end
 
 end # module
