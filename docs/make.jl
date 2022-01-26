@@ -14,4 +14,5 @@ makedocs(;
 
 deploydocs(;
     repo="github.com/tkf/DisplayAs.jl",
+    push_preview = true,
 )
