@@ -152,7 +152,7 @@ julia> rand(2, 2) |> DisplayAs.withcontext(:compact => false)
  0.32186846202784314  0.791263230914472
 ```
 
-See also [`DisplayAs.withcontext`](@ref).
+See also [`DisplayAs.setcontext`](@ref).
 """
 withcontext(kvs::Pair...) = obj -> setcontext(obj, kvs...)
 
