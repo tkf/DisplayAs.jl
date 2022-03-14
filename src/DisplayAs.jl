@@ -12,6 +12,7 @@ _showables = [
     (:JSON, "application/json")
     (:SVG, "image/svg+xml")
     (:PNG, "image/png")
+    (:GIF, "image/gif")
     (:PDF, "application/pdf")
     (:EPS, "application/eps")
     (:JPEG, "image/jpeg")
