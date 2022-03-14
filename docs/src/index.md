@@ -4,5 +4,5 @@
 ```
 
 ```@autodocs
-Modules = [DisplayAs]
+Modules = [DisplayAs, DisplayAs.Raw]
 ```
