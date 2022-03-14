@@ -18,7 +18,7 @@ for (_, mime) in _showables
 end
 
 """
-    DisplayAs.Raw.mime"..." :: Type{<:Showable}
+    DisplayAs.Raw.mime"..." :: Type{<:DisplayAs.Raw.Showable}
 
 # Examples
 ```jldoctest
