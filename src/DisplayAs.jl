@@ -192,9 +192,9 @@ for mime in _textmimes
 end
 
 """
-    Unlimited
+    DisplayAs.unlimited(x)
 
-Unlimit display size. Useful for, e.g., printing all contents of
+Unlimit display size of object `x`. Useful for, e.g., printing all contents of
 dataframes in a Jupyter notebook.
 
 # Examples
@@ -203,13 +203,17 @@ julia> using DisplayAs, VegaDatasets
 
 julia> data = dataset("cars");
 
-julia> data |> DisplayAs.Unlimited
+julia> data |> DisplayAs.unlimited
 ```
 """
-function Unlimited(x)
-    setcontext(x, :compact => false, :limit => false,
-                  :displaysize => (typemax(Int), typemax(Int)))
-end
+unlimited(x) = setcontext(
+    x,
+    :compact => false,
+    :limit => false,
+    :displaysize => (typemax(Int), typemax(Int)),
+)
+
+@deprecate Unlimited(x) unlimited(x) false
 
 include("Raw.jl")
 
