@@ -14,8 +14,7 @@ end
 
 for (_, mime) in _showables
     MIMEType = typeof(MIME(mime))
-    @eval Base.show(io::IO, ::$MIMEType, s::Showable{>:$MIMEType}) =
-        write(io, s.bytes)
+    @eval Base.show(io::IO, ::$MIMEType, s::Showable{>:$MIMEType}) = write(io, s.bytes)
 end
 
 """
