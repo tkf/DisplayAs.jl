@@ -211,4 +211,6 @@ function Unlimited(x)
                   :displaysize => (typemax(Int), typemax(Int)))
 end
 
+include("Raw.jl")
+
 end # module

@@ -8,7 +8,7 @@ function Base.show(io::IO, ::MIME"text/plain", ::PrintContext)
     print(io, get(io, :displaysize, "-"))
 end
 
-@testset "DisplayAs.jl" begin
+@testset "DisplayAs" begin
     @test showable("text/plain", DisplayAs.Text(nothing))
     @test showable("text/html", DisplayAs.HTML(nothing))
     @test showable("text/markdown", DisplayAs.MD(nothing))
@@ -33,6 +33,17 @@ end
     # Unlimited
     show(ioc, MIME"text/plain"(), DisplayAs.Unlimited(PrintContext()))
     @test String(take!(iob)) == "false/false/($(typemax(Int)), $(typemax(Int)))"
+end
+
+@testset "DisplayAs.Raw" begin
+    @testset "text/plain" begin
+        io = IOBuffer()
+        print(io, "hello")
+        bytes = take!(io)
+        s = DisplayAs.Raw.Text(bytes)
+        @test showable("text/plain", s)
+        @test sprint(show, "text/plain", s) == "hello"
+    end
 end
 
 using Aqua
