@@ -208,7 +208,7 @@ julia> data |> DisplayAs.Unlimited
 """
 function Unlimited(x)
     setcontext(x, :compact => false, :limit => false,
-                  :displaysize => (typemax(Int), typemax(Int)))
+                 :displaysize => (typemax(Int), typemax(Int)))
 end
 
 end # module
