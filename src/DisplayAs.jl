@@ -206,9 +206,12 @@ julia> data = dataset("cars");
 julia> data |> DisplayAs.unlimited
 ```
 """
-unlimited(x) =
-    setcontext(x, :compact => false, :limit => false,
-                  :displaysize => (typemax(Int), typemax(Int)))
+unlimited(x) = setcontext(
+    x,
+    :compact => false,
+    :limit => false,
+    :displaysize => (typemax(Int), typemax(Int)),
+)
 
 @deprecate Unlimited(x) unlimited(x) false
 
