@@ -12,7 +12,15 @@ struct Showable{mime<:MIME}
     bytes::Vector{UInt8}
 end
 
-Base.show(io::IO, ::mime, s::Showable{mime}) where {mime<:MIME} = write(io, s.bytes)
+if VERSION >= v"1.7"
+    Base.show(io::IO, ::mime, s::Showable{mime}) where {mime<:MIME} = write(io, s.bytes)
+else
+    for (_, mime) in _showables
+        MIMEType = typeof(MIME(mime))
+        @eval Base.show(io::IO, ::$MIMEType, s::Showable{>:$MIMEType}) =
+            show(io, $MIMEType(), s.content)
+    end
+end
 
 """
     DisplayAs.Raw.mime"..." :: Type{<:Showable}
