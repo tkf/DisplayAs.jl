@@ -21,7 +21,11 @@ jobs:
           using JuliaFormatter
           format(".")
         shell: julia --color=yes --compile=min -O0 {0}
-      - name: suggester / JuliaFormatter
+      - name: Suggest style (suggester / JuliaFormatter)
+        uses: reviewdog/action-suggester@v1
+        with:
+          tool_name: JuliaFormatter
+      - name: Check style (suggester / JuliaFormatter)
         uses: reviewdog/action-suggester@v1
         with:
           tool_name: JuliaFormatter
