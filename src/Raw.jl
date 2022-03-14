@@ -38,7 +38,7 @@ for (name, mime) in _showables
 
     Wrap a pre-rendered `bytes` into an object that defines `show` for MIME type $mime.
 
-    See also [`DisplayAs.Raw.Showable`](@ref).
+    See also [`DisplayAs.Raw.Showable`](@ref Showable).
     """
     @eval @doc $doc const $name = @mime_str $mime
 end
