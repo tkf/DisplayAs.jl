@@ -7,4 +7,4 @@ jobs:
   code-style:
     runs-on: ubuntu-latest
     steps:
-      - uses: tkf/julia-code-style-suggesters@fdee1fa54f61fb3c78c0c3278d29f7e6cd88a723
+      - uses: tkf/julia-code-style-suggesters@98fbf4fd8ea0b0b511e70da6c7cf9248a8495b42
