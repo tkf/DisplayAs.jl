@@ -10,7 +10,7 @@ _showables = [
     (:MD, "text/markdown")
     (:HTML, "text/html")
     (:JSON, "application/json")
-  (:SVG, "image/svg+xml")
+    (:SVG, "image/svg+xml")
     (:PNG, "image/png")
     (:GIF, "image/gif")
     (:PDF, "application/pdf")
