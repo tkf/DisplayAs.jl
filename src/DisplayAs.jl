@@ -57,10 +57,17 @@ true
 """
 struct Showable{mime <: MIME}
     content
+    options::NamedTuple
 end
+
+function Showable{T}(content; options...) where {T<:MIME}
+    @nospecialize
+    return Showable{T}(content, (; options...))
+end
+
 # Allows nesting to enable an object to show with multiple mimes
 function Showable{T}(s::Showable{S}) where {T<:MIME, S<:MIME}
-    return Showable{Union{T,S}}(s.content)
+    return Showable{Union{T,S}}(s.content, s.options)
 end
 
 # Following method introduces method ambiguities with `Base` and
@@ -72,8 +79,8 @@ Base.show(io::IO, ::mime, s::Showable{mime}) where mime <: MIME =
 
 for (_, mime) in _showables
     MIMEType = typeof(MIME(mime))
-    @eval Base.show(io::IO, ::$MIMEType, s::Showable{>:$MIMEType}) =
-        show(io, $MIMEType(), s.content)
+    @eval Base.show(io::IO, ::$MIMEType, s::Showable{>:$MIMEType}; options...) =
+        show(io, $MIMEType(), s.content; s.options..., options...)
 end
 
 """
@@ -93,7 +100,7 @@ end
 
 for (name, mime) in _showables
     doc = """
-        DisplayAs.$name(x)
+        DisplayAs.$name(x; options...)
 
     Wrap an object `x` in another object that prefers to be displayed as
     MIME type $mime.  That is to say, `display(DisplayAs.$name(x))` is
@@ -101,6 +108,8 @@ for (name, mime) in _showables
 
     If `x` is already of type `Showable` the result will allow
     displaying in both the original and the new MIME type.
+
+    The named arguments `options` are passed to the 3-argument `show` method of `x`.
 
     See also [`Showable`](@ref).
     """
@@ -185,9 +194,9 @@ _textmimes = [
 
 for mime in _textmimes
     mimetype = MIME{Symbol(mime)}
-    @eval function Base.show(io::IO, ::$mimetype, obj::IOContextCarrier)
+    @eval function Base.show(io::IO, ::$mimetype, obj::IOContextCarrier; options...)
         ioc = IOContext(io, obj.context...)
-        show(ioc, $mimetype(), obj.content)
+        show(ioc, $mimetype(), obj.content; options...)
     end
 end
 

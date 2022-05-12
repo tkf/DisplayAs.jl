@@ -1,6 +1,11 @@
 using DisplayAs
 using Test
 
+struct PrintOptions end
+function Base.show(io::IO, ::MIME"text/plain", ::PrintOptions; options...)
+    show(io, (; options...))
+end
+
 struct PrintContext end
 function Base.show(io::IO, ::MIME"text/plain", ::PrintContext)
     print(io, get(io, :compact, "-"), "/")
@@ -17,6 +22,9 @@ end
     @test showable("text/plain", text_png)
     @test showable("image/png", text_png)
     @test !showable("image/html", text_png)
+    @test sprint(show, "text/plain", DisplayAs.Text(PrintOptions())) == repr(NamedTuple())
+    @test sprint(show, "text/plain", DisplayAs.Text(PrintOptions(); a = 1)) ==
+          repr((; a = 1))
     # (set|with)context
     iob = IOBuffer()
     ioc = IOContext(iob, :compact=>true, :limit=>true, :displaysize=>(24, 80))
