@@ -22,7 +22,7 @@ end
     @test showable("text/plain", text_png)
     @test showable("image/png", text_png)
     @test !showable("image/html", text_png)
-    @test sprint(show, "text/plain", DisplayAs.Text(PrintOptions())) == repr((;))
+    @test sprint(show, "text/plain", DisplayAs.Text(PrintOptions())) == repr(NamedTuple())
     @test sprint(show, "text/plain", DisplayAs.Text(PrintOptions(); a = 1)) ==
           repr((; a = 1))
     # (set|with)context
